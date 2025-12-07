@@ -3,9 +3,7 @@
       <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-2 mb-2">
-            <h3 class="text-lg font-semibold text-gray-900">
-              {{ session.title }}
-            </h3>
+            <h3 class="text-lg font-semibold text-gray-900" v-html="highlightedTitle"></h3>
   
             <span
               v-if="session.difficulty"
@@ -81,10 +79,51 @@
       type: Boolean,
       required: true,
     },
+    searchTerm: {
+      type: String,
+      default: '',
+    },
   })
-  
+
   defineEmits(['toggle-complete'])
-  
+
+  // Highlight the matched text in title
+  const highlightedTitle = computed(() => {
+    if (!props.searchTerm || !props.searchTerm.trim()) {
+      return props.session.title
+    }
+
+    const searchLower = props.searchTerm.toLowerCase()
+    const title = props.session.title
+    const titleLower = title.toLowerCase()
+
+    if (!titleLower.includes(searchLower)) {
+      return title
+    }
+
+    const parts = []
+    let lastIndex = 0
+    let index = titleLower.indexOf(searchLower, lastIndex)
+
+    while (index !== -1) {
+      // Add text before match in the title
+      if (index > lastIndex) {
+        parts.push(title.substring(lastIndex, index))
+      }
+      // Add highlighted match in the title
+      parts.push(`<mark class="bg-yellow-200 font-semibold">${title.substring(index, index + props.searchTerm.length)}</mark>`)
+      lastIndex = index + props.searchTerm.length
+      index = titleLower.indexOf(searchLower, lastIndex)
+    }
+
+    // Add remaining text from the title
+    if (lastIndex < title.length) {
+      parts.push(title.substring(lastIndex))
+    }
+
+    return parts.join('')
+  })
+
   const difficultyBadgeClass = computed(() => {
     const difficulty = props.session.difficulty?.toLowerCase()
     if (difficulty === 'beginner') {

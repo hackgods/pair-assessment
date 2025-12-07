@@ -87,6 +87,7 @@
           :sessions="filteredSessions"
           :is-completed="isCompleted"
           :toggle-complete="toggleComplete"
+          :search-term="debouncedSearch"
         />
       </div>
     </div>
@@ -109,12 +110,17 @@ const simulateErrorNext = ref(false)
 
 // Debounce search input (300ms)
 let debounceTimer = null
+let searchCounter = 0
 watch(searchInput, (newValue) => {
   if (debounceTimer) {
     clearTimeout(debounceTimer)
   }
+  // Increment counter for this search attempt to combat race condition
+  const currentSearch = ++searchCounter
   debounceTimer = setTimeout(() => {
-    debouncedSearch.value = newValue
+    if (currentSearch === searchCounter) {
+      debouncedSearch.value = newValue
+    }
   }, 300)
 })
 

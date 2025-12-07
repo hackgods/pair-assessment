@@ -5,6 +5,7 @@
       :key="session.id"
       :session="session"
       :is-completed="isCompleted(session)"
+      :search-term="searchTerm"
       @toggle-complete="toggleComplete"
     />
   </ul>
@@ -28,6 +29,10 @@ defineProps({
   toggleComplete: {
     type: Function,
     required: true,
+  },
+  searchTerm: {
+    type: String,
+    default: '',
   },
 })
 </script>
