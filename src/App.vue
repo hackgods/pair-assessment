@@ -47,6 +47,19 @@
           </label>
           <p id="simulate-error-description" class="sr-only">When checked, the next attempt to load sessions will fail to demonstrate error handling</p>
         </div>
+
+        <div>
+          <button
+            type="button"
+            @click="loadSessions"
+            :aria-label="loading ? 'Loading sessions, please wait' : 'Reload sessions'"
+            :title="loading ? 'Loading sessions, please wait' : 'Reload sessions'"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            :disabled="loading"
+          >
+            {{ loading ? 'Loading...' : 'Reload Sessions' }}
+          </button>
+        </div>
       </div>
 
       <div v-if="loading" class="bg-white rounded-xl shadow p-8 text-center" aria-busy="true">
@@ -58,8 +71,9 @@
         <button
           type="button"
           @click="loadSessions"
-          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           aria-label="Retry loading sessions"
+          title="Retry loading sessions"
+          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         >
           Retry
         </button>
@@ -108,8 +122,10 @@ const loadSessions = async () => {
   loading.value = true
   error.value = null
 
+  const shouldError = simulateErrorNext.value
+
   try {
-    const rawSessions = await fakeFetchSessions({ shouldError: simulateErrorNext.value })
+    const rawSessions = await fakeFetchSessions({ shouldError })
     
     // Coerce mins to number and add index for stable sorting
     sessions.value = rawSessions.map((session, index) => ({
@@ -117,12 +133,11 @@ const loadSessions = async () => {
       mins: Number(session.mins),
       index,
     }))
-
-    // Reset error simulation flag after use
-    simulateErrorNext.value = false
   } catch (err) {
     error.value = err.message
   } finally {
+    // Reset error simulation flag after fetch attempt
+    simulateErrorNext.value = false
     loading.value = false
   }
 }

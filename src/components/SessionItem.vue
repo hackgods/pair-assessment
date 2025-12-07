@@ -51,6 +51,7 @@
             @click="$emit('toggle-complete', session.id)"
             :aria-pressed="isCompleted"
             :aria-label="isCompleted ? 'Mark session as incomplete' : 'Mark session as complete'"
+            :title="isCompleted ? 'Mark session as incomplete' : 'Mark session as complete'"
             class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             :class="isCompleted
               ? 'bg-green-100 text-green-800 hover:bg-green-200'
