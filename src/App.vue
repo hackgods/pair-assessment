@@ -14,8 +14,10 @@
             v-model="searchInput"
             type="text"
             placeholder="Search by title"
+            aria-describedby="search-description"
             class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
+          <p id="search-description" class="sr-only">Search sessions by title</p>
         </div>
 
         <div class="mb-4">
@@ -35,12 +37,15 @@
         <div class="mb-4">
           <label class="flex items-center">
             <input
+              id="simulate-error"
               v-model="simulateErrorNext"
               type="checkbox"
               class="mr-2"
+              aria-describedby="simulate-error-description"
             />
             <span class="text-sm text-gray-700">Simulate error on next load</span>
           </label>
+          <p id="simulate-error-description" class="sr-only">When checked, the next attempt to load sessions will fail to demonstrate error handling</p>
         </div>
       </div>
 
@@ -51,19 +56,25 @@
       <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-xl p-6" role="alert">
         <p class="text-red-800 mb-4">{{ error }}</p>
         <button
+          type="button"
           @click="loadSessions"
-          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors"
+          class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          aria-label="Retry loading sessions"
         >
           Retry
         </button>
       </div>
 
-      <SessionList
-        v-else
-        :sessions="filteredSessions"
-        :is-completed="isCompleted"
-        :toggle-complete="toggleComplete"
-      />
+      <div v-else>
+        <div v-if="filteredSessions.length > 0" class="sr-only" aria-live="polite" aria-atomic="true">
+          Showing {{ filteredSessions.length }} session{{ filteredSessions.length !== 1 ? 's' : '' }}
+        </div>
+        <SessionList
+          :sessions="filteredSessions"
+          :is-completed="isCompleted"
+          :toggle-complete="toggleComplete"
+        />
+      </div>
     </div>
   </div>
 </template>

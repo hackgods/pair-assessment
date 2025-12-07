@@ -1,5 +1,5 @@
 <template>
-    <li class="bg-white rounded-xl shadow p-5 hover:shadow-md transition-shadow">
+    <li role="listitem" class="bg-white rounded-xl shadow p-5 hover:shadow-md transition-shadow">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-2 mb-2">
